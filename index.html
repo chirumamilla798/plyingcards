@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Player Card Game</title>
+    <style>
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 50px;
+        }
+        .card {
+            width: 80px;
+            height: 120px;
+            background-color: gray;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .card img {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Player 1 and Player 2: Select 3 Cards Each</h2>
+    <div class="card-container" id="game-board"></div>
+
+    <script>
+        // Correctly defining the images array
+        let images = Array.from({length: 100}, (_, i) => `images/image${i + 1}.jpg`);
+
+        // Shuffling the images randomly
+        let shuffledImages = images.sort(() => Math.random() - 0.5);
+        let selectedCards = 0;
+        let currentPlayer = 1;
+        let playerSelections = { 1: [], 2: [] };
+
+        const gameBoard = document.getElementById("game-board");
+
+        // Generating 12 cards
+        for (let i = 0; i < 100; i++) {
+            let card = document.createElement("div");
+            card.classList.add("card");
+            let img = document.createElement("img");
+            img.src = shuffledImages[i];
+
+            // Fallback for missing images
+            img.onerror = function () {
+                this.src = "images/placeholder.jpg";
+            };
+
+            card.appendChild(img);
+            card.onclick = () => revealCard(card, i);
+            gameBoard.appendChild(card);
+        }
+
+        function revealCard(card, index) {
+            if (selectedCards < 6 && !playerSelections[1].includes(index) && !playerSelections[2].includes(index)) {
+                let img = card.querySelector("img");
+                img.style.display = "block";
+                card.style.backgroundColor = "transparent";
+                playerSelections[currentPlayer].push(index);
+                selectedCards++;
+
+                if (selectedCards % 3 === 0) {
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                }
+
+                if (selectedCards === 6) {
+                    setTimeout(() => alert("Game Over! Reload to play again."), 500);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
